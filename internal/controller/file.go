@@ -26,12 +26,17 @@ func GetFolderFiles(folder string) ([]model.File,  error) {
 }
 
 func GenerateFoldersByExtension(dstFolder string, extensions []model.Extension) error {
+	auxExtMap := make(map[string]bool, len(extensions))
 	for _, extension := range extensions {
-		folder := path.Join(dstFolder, extension.Name)
+		if _, ok := auxExtMap[extension.Name]; !ok {
+			folder := path.Join(dstFolder, extension.Name)
 
-		err := os.Mkdir(folder, 0777)
-		if err != nil {
-			return err
+			err := os.Mkdir(folder, 0777)
+			if err != nil {
+				return err
+			}
+			
+			auxExtMap[extension.Name] = true
 		}
 	}
 
