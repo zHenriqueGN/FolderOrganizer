@@ -5,16 +5,17 @@ import (
 	"os"
 	"path"
 
+	"github.com/zHenriqueGN/FolderOrganizer/internal/config"
 	"github.com/zHenriqueGN/FolderOrganizer/internal/controller"
 	"github.com/zHenriqueGN/FolderOrganizer/internal/model"
 )
 
-const (
-	dstFolder = "/workspaces/FolderOrganizer/test"
-)
+func init() {
+	config.LoadEnv()
+}
 
 func main() {
-	files, err := controller.GetFolderFiles(dstFolder)
+	files, err := controller.GetFolderFiles(config.RootFolder)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -25,14 +26,14 @@ func main() {
 		extensions = append(extensions, file.Extension)
 	}
 	
-	err = controller.GenerateFoldersByExtension(dstFolder, extensions)
+	err = controller.GenerateFoldersByExtension(config.RootFolder, extensions)
 	if err != nil {
 		log.Fatal(err)
 	}
 
 	for _, file := range files {
-		oldFilePath := path.Join(dstFolder, file.Name)
-		newFilePath := path.Join(dstFolder, file.Extension.Name, file.Name)
+		oldFilePath := path.Join(config.RootFolder, file.Name)
+		newFilePath := path.Join(config.RootFolder, file.Extension.Name, file.Name)
 		err = os.Rename(oldFilePath, newFilePath)
 		if err != nil {
 			log.Fatal(err)
