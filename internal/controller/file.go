@@ -32,10 +32,10 @@ func GenerateFoldersByExtension(dstFolder string, extensions []model.Extension) 
 			folder := path.Join(dstFolder, extension.Name)
 
 			err := os.Mkdir(folder, 0777)
-			if err != nil {
+			if err != nil && !os.IsExist(err) {
 				return err
 			}
-			
+
 			auxExtMap[extension.Name] = true
 		}
 	}
