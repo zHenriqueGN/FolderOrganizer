@@ -7,8 +7,8 @@ import (
 	"github.com/zHenriqueGN/FolderOrganizer/internal/model"
 )
 
-func GetFolderFiles(folder string) ([]string, error) {
-	var files []string
+func GetFolderFiles(folder string) ([]model.File,  error) {
+	var files []model.File
 	dirEntrys, err := os.ReadDir(folder)
 	if err != nil {
 		return files, err
@@ -16,7 +16,10 @@ func GetFolderFiles(folder string) ([]string, error) {
 
 	for _, entry := range dirEntrys {
 		if !entry.IsDir() {
-			files = append(files, entry.Name())
+			var file model.File
+			file.Name = entry.Name()
+			file.Extension.Name = file.GetExtensionName()
+			files = append(files, file)
 		}
 	}
 	return files, nil
@@ -26,7 +29,7 @@ func GenerateFoldersByExtension(dstFolder string, extensions []model.Extension) 
 	for _, extension := range extensions {
 		folder := path.Join(dstFolder, extension.Name)
 
-		err := os.Mkdir(folder, 0666)
+		err := os.Mkdir(folder, 0777)
 		if err != nil {
 			return err
 		}
@@ -34,3 +37,4 @@ func GenerateFoldersByExtension(dstFolder string, extensions []model.Extension) 
 
 	return nil
 }
+
